@@ -1,21 +1,96 @@
-// Homework2_Jacob_Frost.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
-#include "pch.h"
+#include "TreeNode.h"
 #include <iostream>
+#include <string>
+using namespace std;
+
+void displayTree(TreeNode * node, string parent, string side)
+{
+	if (node == nullptr)
+	{
+		return;
+	}
+	if (side != " ")
+	{
+		side += " of";
+	}
+	cout << "Displaying node: " << node->getName() << side << " Parent = " << parent << endl;
+	displayTree(node->getLeft(), node->getName(), "  Left");
+	displayTree(node->getRight(), node->getName(), "  Right");
+}
+
+int doTheTree(TreeNode * node) {
+	if (!node)
+		return 0;
+
+	//if its a lead its an int
+	if (!node->getLeft() && !node->getRight()) {
+		cout << node->getName();
+		return stoi(node->getName());
+	}
+
+	int goLeft = doTheTree(node->getLeft());
+
+	int goRight = doTheTree(node->getRight());
+
+	// Comapre Operand
+	if (node->getName() == "+") {
+		cout << "+";
+		return goLeft + goRight;
+	}
+
+	if (node->getName() == "-") {
+		cout << "-";
+		return goLeft - goRight;
+	}
+
+	if (node->getName() == "*") {
+		cout << "*";
+		return goLeft * goRight;
+	}
+	if (node->getName() == "/") {
+		cout << "/";
+		return goLeft / goRight;
+	}
+
+	cout << "Error invalid char" << endl;
+	return -1;
+}
+
 
 int main()
 {
-    std::cout << "Hello World!\n"; 
+	//Set up the tree
+	TreeNode * root = new TreeNode();
+	root->setName("/");
+	TreeNode * left = root->addLeft("*");
+	TreeNode * right = root->addRight("D");
+	left->addLeft("A");
+	left = left->addRight("+");
+	left->addLeft("B");
+	left->addRight("C");
+
+
+	displayTree(root, " ", " ");
+
+
+	//update the tree with numberical values
+	left = root->getLeft();
+	left->getLeft()->setName("2");
+	left = left->getRight();
+	left->getLeft()->setName("7");
+	left->getRight()->setName("3");
+	right->setName("5");
+
+	//Display coorisponding values
+	cout << "A = " << root->getLeft()->getLeft()->getName() << endl;
+	cout << "B = " << root->getLeft()->getRight()->getLeft()->getName() << endl;
+	cout << "C = " << root->getLeft()->getRight()->getRight()->getName() << endl;
+	cout << "D = " << right->getName() << endl;
+
+	//Solve the tree
+	cout << "Expression (postfix): ";
+	cout << endl << "THE ANSWER: " << doTheTree(root) << endl;
+
+	delete root;
 }
 
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
